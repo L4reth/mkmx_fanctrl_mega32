@@ -37,8 +37,7 @@ ISR(TIMER1_CAPT_vect) //measuring speed interrupt
 	if(u16CounterDiff > 700)
 	{
 		u16Period = u16CounterDiff;
-	}
-	
+	}	
 	u16ICPCounter++;
 }
 
@@ -56,12 +55,25 @@ ISR(TIMER2_OVF_vect) //Detecting fan stop interrupt
 int main(void)
 {
     /* I/O ports settings */
+		   //76543210 pin numbers 1-output
+	DDRA = 0b00000000; //Dedicated for adress pins
+// 	DDRB = 0b
+// 	DDRC = 0b
+	DDRD |= (1<<DDD6); //input capture pin
+	DDRD |= (1<<DDD5); //pwm output pin
 	
-	/* PWM module config */
+	/* PWM module config */ //fast pwm, presc. =8
+	TCCR0 |= (1<<WGM00)|(1<<WGM01)|(1<<COM01)|	(1<<CS01);
+	OCR0 = 0; //full speed
 	
 	/* Input capture config */
+	TCCR1A = 0x00;
+	TCCR1B |= (1<<ICNC1)|(1<<ICES1)|(1<<CS12);
+	TIMSK |= (1<<TICIE1);
 	
 	/* Stop detecting config */ //8 bitów zamiast 16!!!!!
+	TCCR2 |= (1<<)
+	
 	
 	/* USART config */
 	
