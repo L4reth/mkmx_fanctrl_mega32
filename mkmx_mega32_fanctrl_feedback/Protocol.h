@@ -1,11 +1,3 @@
-/*
- * Protocol.h
- *
- *	Created: 2019-06-01 15:10:33
- *  Author: Rafal
- *	File contains all necessary functions 
- */ 
-
 
 #ifndef PROTOCOL_H_
 #define PROTOCOL_H_
@@ -14,10 +6,11 @@
 #define PL_LENGHT 16
 #define ADRR 10
 
-#define PING			0x01 //send back to master information abut module
-#define SET_SPEED		0x02 //set Fan speed
-#define RETURN_SPEED	0x03 //send to master information abut current fan speed
-#define RETURN_OCR		0x04 //send OCR0A register value
+#define PING				0x01 //send back to master information abut module
+#define SET_SPEED			0x02 //set Fan speed
+#define RETURN_SPEED_HEX	0x03 //send to master information abut current fan speed
+#define RETURN_SPEED_ASCII	0x04 //send to master current fan speed converted to ASCII code
+#define RETURN_OCR			0x05 //send OCR0A register value
 
 #include <avr/pgmspace.h>
 #include <avr/io.h>

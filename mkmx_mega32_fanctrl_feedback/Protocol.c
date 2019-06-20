@@ -1,9 +1,3 @@
-/*
- * Protocol.c
- *
- * Created: 2019-06-01 15:10:18
- *  Author: Rafal
- */ 
 
 #include "Protocol.h"
 
@@ -219,8 +213,8 @@ void ParseFrame(void)
 			//komendy steruj¹ce wiatakiem
 			case PING:			//0x01
 			{
-				uint8_t u8DataTab[1] = {0xAA};
-				SendData(0x00, 't', u8DataTab, 1);
+				uint8_t u8DataTab[8] = "Fan_ctrl";
+				SendData(0x00, 't', u8DataTab, 8);
 			}
 			break;
 			
@@ -231,7 +225,7 @@ void ParseFrame(void)
 			}
 			break;
 			
-			case RETURN_SPEED:	//0x03
+			case RETURN_SPEED_HEX:	//0x03
 			{
 				uint8_t u8SpeedTab[2];
 				// 0 - older bit, 1 - younger bit of RPM
@@ -242,11 +236,18 @@ void ParseFrame(void)
 			}
 			break;
 			
-			case RETURN_OCR:	//0x04
+			case RETURN_SPEED_ASCII: //0x04
+			{
+				uint8_t u8SpeedTab[5];
+				itoa(u16LastRPM,u8SpeedTab,10);				
+				SendData(0x00, 't', u8SpeedTab, 5);				
+			}
+			break;
+			
+			case RETURN_OCR:	//0x05
 			{
 				uint8_t u8DataTab[1] = {OCR0};
-				SendData(0x00, 't', u8DataTab, 0x01);
-				
+				SendData(0x00, 't', u8DataTab, 0x01);		
 			}
 			break;
 			
