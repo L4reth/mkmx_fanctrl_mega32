@@ -27,7 +27,7 @@ volatile uint16_t u16SetRPM = 0;
 //Device adress in net
 volatile uint8_t u8DeviceAdres = 0;
 
-volatile uint8_t szybkosc = 0;
+volatile uint8_t u8Speed = 0;
 
 ISR(TIMER1_CAPT_vect) //measuring speed interrupt
 {

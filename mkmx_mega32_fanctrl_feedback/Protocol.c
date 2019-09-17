@@ -213,7 +213,8 @@ void ParseFrame(void)
 			//komendy steruj¹ce wiatakiem
 			case PING:			//0x01
 			{
-				uint8_t u8DataTab[8] = "Fan_ctrl";
+				uint8_t u8TempAdrr = ReadArdress(); 
+				uint8_t u8DataTab[] = {0x44, u8TempAdrr, 0x55, 0x66};
 				SendData(0x00, 't', u8DataTab, 8);
 			}
 			break;
@@ -221,7 +222,7 @@ void ParseFrame(void)
 			case SET_SPEED:		//0x02
 			{
 				//u16SetRPM  = (sFrame.u8Payload[0] << 8) + sFrame.u8Payload[1];
-				szybkosc = sFrame.u8Payload[0];
+				u8Speed = sFrame.u8Payload[0];
 			}
 			break;
 			
@@ -250,6 +251,12 @@ void ParseFrame(void)
 				SendData(0x00, 't', u8DataTab, 0x01);		
 			}
 			break;
+			
+			case PING_2:			//0x06
+			{
+				uint8_t u8DataTab[8] = "Fan_ctrl";
+				SendData(0x00, 't', u8DataTab, 8);
+			}
 			
 			default:
 			break;
@@ -355,11 +362,11 @@ void SpeedDown(uint8_t value)
 	OCR0 += value;
 }
 
-void PID(uint16_t u16ExpRPM, uint16_t u16RPM)
+void PID(uint16_t u16ExpectedRPM, uint16_t u16RPM)
 {
-	if(u16RPM > u16ExpRPM)
+	if(u16RPM > u16ExpectedRPM)
 	SpeedDown(5);
-	if(u16RPM < u16ExpRPM)
+	if(u16RPM < u16ExpectedRPM)
 	SpeedUp(5);
 }
 

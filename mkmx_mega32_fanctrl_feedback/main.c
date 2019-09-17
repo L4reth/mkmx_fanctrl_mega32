@@ -17,7 +17,7 @@
 #include "Protocol.h"
 
 //Measuring and Calculating RPM
-volatile uint16_t u16CounterDiff = 1;
+volatile uint16_t u16CounterDiff = 1; //difference between interruptions
 volatile uint16_t u16TmpDiff = 0;
 volatile uint16_t u16Period = 0;
 //Detecting fan stop
@@ -27,17 +27,19 @@ volatile uint8_t u8IntCounter = 0;
 //Returning RPM value
 volatile uint16_t u16LastRPM = 0;
 volatile uint16_t u16SetRPM = 0;
-//Device adress in net
+//Device address in net
 volatile uint8_t u8DeviceAdres = 0;
-
-volatile uint8_t szybkosc = 0;
+//Seting Fan speed
+volatile uint8_t u8SpeedAdjustFlag = 0;
+volatile uint8_t u8Speed = 0;
 
 ISR(TIMER1_CAPT_vect) //measuring speed interrupt
-{
+{							//done on every timer_1 overflow
 	u16CounterDiff = (TCNT1 - u16TmpDiff);
 	u16TmpDiff = TCNT1;
 	
 	TCCR1B ^= (1<<ICES1);
+	u8SpeedAdjustFlag = 1; //Allow to change Fan speed
 	
 	if(u16CounterDiff > 700)
 	{
@@ -73,7 +75,7 @@ int main(void)
 {
     /* I/O ports settings */
 		   //76543210 pin numbers 1-output
-	DDRA = 0b00000000; //Dedicated for adress pins
+	DDRA = 0b00000000; //Dedicated for address pins
 // 	DDRB = 0b
 // 	DDRC = 0b
 	DDRD |= (1<<DDD6); //input capture pin
@@ -89,8 +91,8 @@ int main(void)
 	TIMSK |= (1<<TICIE1);
 	
 	/* Stop detecting config */ //8 bitów zamiast 16!!!!!
-	TCCR2 |= (1<<CS02)|(1<<CS01)|(1<<CS00); //free runing, presc = 1024
-	TIMSK |= (1<<TOV2);										//overflow 30/sec
+	TCCR2 |= (1<<CS02)|(1<<CS01)|(1<<CS00); //free running, presc = 1024
+	TIMSK |= (1<<TOV2);										//overflow 30 per sec.
 	
 	/* USART config */
 	Protocolinit();
@@ -101,7 +103,12 @@ int main(void)
 	/* Infinite loop */
     while (1) 
     {
-		//u16LastRPM = SpeedRetrun(u16Period, u8stopFlag);
+		u16LastRPM = SpeedRetrun(u16Period, u8stopFlag);
+		if(u8SpeedAdjustFlag = 1)
+		{
+			PID(u8Speed,u16LastRPM);
+			u8SpeedAdjustFlag = 0; //wait for next interrupt
+		}
 		u16LastRPM = 1956;
 		ParseData();		
     }

@@ -6,11 +6,13 @@
 #define PL_LENGHT 16
 #define ADRR 10
 
-#define PING				0x01 //send back to master information abut module
+#define PING				0x01 //send back to master information abut module (dev type, dev adr, dev id itd.)
 #define SET_SPEED			0x02 //set Fan speed
 #define RETURN_SPEED_HEX	0x03 //send to master information abut current fan speed
 #define RETURN_SPEED_ASCII	0x04 //send to master current fan speed converted to ASCII code
 #define RETURN_OCR			0x05 //send OCR0A register value
+#define PING_2				0x06 //send back "Fan_ctrl"
+
 
 #include <avr/pgmspace.h>
 #include <avr/io.h>
@@ -21,7 +23,7 @@
 
 extern volatile uint16_t u16SetRPM;
 extern volatile uint16_t u16LastRPM;
-extern volatile uint8_t szybkosc;
+extern volatile uint8_t u8Speed;
 
 //Protocol comunictation functions
 void SendData(uint8_t u8Addr, uint8_t u8Cmd, uint8_t *pu8Payload, uint16_t u8PayloadLen);
